@@ -15,12 +15,13 @@ using System.Windows.Shapes;
 
 namespace botn_savegame_manipulator
 {
-    /// <summary>
-    /// Interaktionslogik für MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
-        
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        ///
+        /// Player Stats
+        ///
+        ////////////////////////////////////////////////////////////////////////////////////////////   
 
         byte[] sexTag_1 = { 0x52, 0x61, 0x63, 0x65, 0x2E, 0x48, 0x75, 0x6D, 0x61, 0x6E, 0x2E, 0x42, 0x72, 0x65, 0x65, 0x64, 0x65, 0x72, 0x00, 0x0B, 0x00, 0x00, 0x00, 0x53, 0x65, 0x78, 0x2E };
         byte[] sexTag_2 = { 0x52, 0x61, 0x63, 0x65, 0x2E, 0x48, 0x75, 0x6D, 0x61, 0x6E, 0x2E, 0x42, 0x72, 0x65, 0x65, 0x64, 0x65, 0x72, 0x00, 0x09, 0x00, 0x00, 0x00, 0x53, 0x65, 0x78, 0x2E };
@@ -77,9 +78,6 @@ namespace botn_savegame_manipulator
             {
                 writeSaveFile(newBlob);
                 setErrorLabel(errorOkText);
-#pragma warning disable 4014
-                triggerClearLabelDelayed();
-#pragma warning restore 4014
             }
             else
             {
@@ -113,14 +111,14 @@ namespace botn_savegame_manipulator
             int indexTag = -1;
             foreach (var entry in tag)
             {
-                indexTag = IndexOf(blob, entry);
+                indexTag = Utils.IndexOf(blob, entry, 0);
                 if (indexTag >= 0)
                 {
                     break;
                 }
             }
 
-            var indexNextTag = IndexOf(blob, nextTag);
+            var indexNextTag = Utils.IndexOf(blob, nextTag, 0);
 
             if (indexTag == -1 || indexNextTag == -1)
             {
@@ -153,6 +151,9 @@ namespace botn_savegame_manipulator
         private void setErrorLabel(String error)
         {
             errorLabel.Content = error;
+#pragma warning disable 4014
+            triggerClearLabelDelayed();
+#pragma warning restore 4014
         }
 
         public async Task triggerClearLabelDelayed()
@@ -161,26 +162,123 @@ namespace botn_savegame_manipulator
             clearErrorLabel();
         }
 
-        private int IndexOf(byte[] blob, byte[] tag)
-        {
-            int hit = 0;
-            for (int i = 0; i < blob.Length; i++)
-            {
-                if (blob[i] == tag[hit])
-                {
-                    hit++;
-                }
-                else
-                {
-                    hit = 0;
-                }
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        ///
+        /// Transform
+        ///
+        ////////////////////////////////////////////////////////////////////////////////////////////
 
-                if (tag.Length == hit)
+        byte[] breastTransformTag = { 0x00, 0x42, 0x72, 0x65, 0x61, 0x73, 0x74, 0x53, 0x69, 0x7A, 0x65, 0x00, 0x0E, 0x00
+            , 0x00, 0x00, 0x46, 0x6C, 0x6F, 0x61, 0x74, 0x50, 0x72, 0x6F, 0x70, 0x65, 0x72, 0x74, 0x79, 0x00, 0x04, 0x00
+            , 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+
+        private float getFloatValue(byte[] blob, int index, int length)
+        {
+            var floatAsBytes = new byte[4];
+            Buffer.BlockCopy(blob, index + length, floatAsBytes, 0, 4);
+            Array.Reverse(floatAsBytes, 0, floatAsBytes.Length);
+            var value = BitConverter.ToSingle(floatAsBytes, 0);
+            byte[] octets = BitConverter.GetBytes(value);
+            Array.Reverse(octets, 0, octets.Length);
+            value = BitConverter.ToSingle(octets, 0);
+            return value;
+        }
+
+        private byte[] setFloatValue(byte[] blob, int index, int length, float newValue)
+        {
+            var newBlob = new byte[blob.Length];
+
+            Buffer.BlockCopy(blob, 0, newBlob, 0, index + length);
+            var floatAsBytes = BitConverter.GetBytes(newValue);
+            Buffer.BlockCopy(floatAsBytes, 0, newBlob, index + length, 4);
+            Buffer.BlockCopy(blob, index + length + 4, newBlob, index + length + 4, blob.Length - (index + length + 4));
+
+            return newBlob;
+        }
+
+        void onTransformRefresh(object sender, RoutedEventArgs e)
+        {
+            var blob = loadSaveFile();
+
+            var indexOfBreastSize = Utils.IndexOf(blob, breastTransformTag, 0);
+            if (indexOfBreastSize >= 0)
+            {
+                breastSizeEdit.Text = getFloatValue(blob, indexOfBreastSize, breastTransformTag.Length).ToString();
+            }
+            else
+            {
+                setErrorLabel("Failed to load data");
+                return;
+            }
+
+            var indexOfBreastClothedSize = Utils.IndexOf(blob, breastTransformTag, indexOfBreastSize + 1);
+            if (indexOfBreastClothedSize >= 0)
+            {
+                breastClothedSizeEdit.Text = getFloatValue(blob, indexOfBreastClothedSize, breastTransformTag.Length).ToString();
+            }
+            else
+            {
+                setErrorLabel("Failed to load data");
+                return;
+            }
+            setErrorLabel("Done.");
+        }
+
+        void onSetBreastSize(object sender, RoutedEventArgs e)
+        {
+            var blob = loadSaveFile();
+
+            var indexOfBreastSize = Utils.IndexOf(blob, breastTransformTag, 0);
+            if (indexOfBreastSize >= 0)
+            {
+                try
                 {
-                    return i - tag.Length + 1;
+                    var newValue = float.Parse(breastSizeEdit.Text);
+                    var newBlob = setFloatValue(blob, indexOfBreastSize, breastTransformTag.Length, newValue);
+                    writeSaveFile(newBlob);
+                }
+                catch(System.FormatException)
+                {
+                    setErrorLabel("Invalid input");
+                    return;
                 }
             }
-            return -1;
+            else
+            {
+                setErrorLabel("Failed to store data");
+            }
+        }
+
+        void onSetBreastClothedSize(object sender, RoutedEventArgs e)
+        {
+            var blob = loadSaveFile();
+
+            var indexOfBreastSize = Utils.IndexOf(blob, breastTransformTag, 0);
+            if (indexOfBreastSize == -1)
+            {
+                setErrorLabel("Failed find index");
+                return;
+            }
+
+            var indexOfBreastClothedSize = Utils.IndexOf(blob, breastTransformTag, indexOfBreastSize + 1);
+            if (indexOfBreastClothedSize >= 0)
+            {
+                try
+                {
+                    var newValue = float.Parse(breastClothedSizeEdit.Text);
+                    var newBlob = setFloatValue(blob, indexOfBreastClothedSize, breastTransformTag.Length, newValue);
+                    writeSaveFile(newBlob);
+                }
+                catch (System.FormatException)
+                {
+                    setErrorLabel("Invalid input");
+                    return;
+                }
+            }
+            else
+            {
+                setErrorLabel("Failed to store data");
+            }
         }
     }
 }

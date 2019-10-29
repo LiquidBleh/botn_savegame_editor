@@ -30,6 +30,33 @@
         Click="onSetMale" ClickMode="Press">
             Set Male
         </Button>
-        <Label Name="errorLabel" Content="" Margin="0,150,0,0"/>
+        <Label Content="Change Transform:" Margin="3,10,3,0"/>
+        <Button Name="btn5" Background="LightGray" Margin="10,0,0,15"
+                BorderBrush="Black" BorderThickness="0" 
+                Click="onTransformRefresh" ClickMode="Press">
+            Refresh
+        </Button>
+        <Grid>
+            <Label Content="Breast Size:" Margin="10,0,10,0"/>
+            <TextBox Name="breastSizeEdit" Margin="146,0,400,0">
+            </TextBox>
+            <Button Name="btn4" Background="LightGray" Margin="379,0,312,0"
+                BorderBrush="Black" BorderThickness="0" 
+                Click="onSetBreastSize" ClickMode="Press">
+                Set
+            </Button>
+        </Grid>
+        <Label Margin="0,0,0,0"/>
+        <Grid>
+            <Label Content="Breast Size Clothed:" Margin="10,0,10,0"/>
+            <TextBox Name="breastClothedSizeEdit" Margin="146,0,400,0">
+            </TextBox>
+            <Button Name="btn6" Background="LightGray" Margin="379,0,312,0"
+                BorderBrush="Black" BorderThickness="0" 
+                Click="onSetBreastClothedSize" ClickMode="Press">
+                Set
+            </Button>
+        </Grid>
+        <Label Name="errorLabel" Content="" Margin="0,30,0,0"/>
     </StackPanel>
 </Window>
