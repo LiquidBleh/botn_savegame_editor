@@ -108,19 +108,23 @@ namespace botn_savegame_manipulator
 
         private byte[] manipulateBytes(byte[] blob, byte[][] tag, byte[] nextTag, byte[] patch)
         {
-            int indexTag = -1;
+            int indexTag = int.MaxValue;
             foreach (var entry in tag)
             {
-                indexTag = Utils.IndexOf(blob, entry, 0);
-                if (indexTag >= 0)
+                var index = Utils.IndexOf(blob, entry, 0);
+                if (index < indexTag)
                 {
-                    break;
+                    indexTag = index;
                 }
+            }
+            if (indexTag == int.MaxValue)
+            {
+                return null;
             }
 
             var indexNextTag = Utils.IndexOf(blob, nextTag, 0);
 
-            if (indexTag == -1 || indexNextTag == -1)
+            if (indexNextTag == -1)
             {
                 return null;
             }
@@ -128,7 +132,7 @@ namespace botn_savegame_manipulator
             var result = new byte[blob.Length + 600];
             Buffer.BlockCopy(blob, 0, result, 0, indexTag + tag.Length);
             Buffer.BlockCopy(patch, 0, result, indexTag, patch.Length);
-            Buffer.BlockCopy(blob, indexNextTag, result, indexTag + patch.Length, blob.Length - indexNextTag);
+            Buffer.BlockCopy(blob, indexNextTag, result, indexTag + patch.Length, blob.Length - indexNextTag - patch.Length);
 
             return result;
         }
