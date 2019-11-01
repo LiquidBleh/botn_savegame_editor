@@ -112,12 +112,12 @@ namespace botn_savegame_manipulator
             foreach (var entry in tag)
             {
                 var index = Utils.IndexOf(blob, entry, 0);
-                if (index < indexTag)
+                if (index < indexTag && index >= 0)
                 {
                     indexTag = index;
                 }
             }
-            if (indexTag == int.MaxValue)
+            if (indexTag == int.MaxValue || indexTag == -1)
             {
                 return null;
             }
@@ -176,6 +176,10 @@ namespace botn_savegame_manipulator
             , 0x00, 0x00, 0x46, 0x6C, 0x6F, 0x61, 0x74, 0x50, 0x72, 0x6F, 0x70, 0x65, 0x72, 0x74, 0x79, 0x00, 0x04, 0x00
             , 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
+        byte[] breastDepthTag     = { 0x00, 0x42, 0x72, 0x65, 0x61, 0x73, 0x74, 0x44, 0x65, 0x70, 0x74, 0x68, 0x00, 0x0E, 0x00
+            , 0x00, 0x00, 0x46, 0x6C, 0x6F, 0x61, 0x74, 0x50, 0x72, 0x6F, 0x70, 0x65, 0x72, 0x74, 0x79, 0x00, 0x04, 0x00, 0x00
+            , 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+
         private float getFloatValue(byte[] blob, int index, int length)
         {
             var floatAsBytes = new byte[4];
@@ -219,6 +223,28 @@ namespace botn_savegame_manipulator
             if (indexOfBreastClothedSize >= 0)
             {
                 breastClothedSizeEdit.Text = getFloatValue(blob, indexOfBreastClothedSize, breastTransformTag.Length).ToString();
+            }
+            else
+            {
+                setErrorLabel("Failed to load data");
+                return;
+            }
+
+            var indexOfBreastDepth = Utils.IndexOf(blob, breastDepthTag, 0);
+            if (indexOfBreastDepth >= 0)
+            {
+                breastDepthEdit.Text = getFloatValue(blob, indexOfBreastDepth, breastDepthTag.Length).ToString();
+            }
+            else
+            {
+                setErrorLabel("Failed to load data");
+                return;
+            }
+
+            var indexOfBreastDepthClothed = Utils.IndexOf(blob, breastDepthTag, indexOfBreastDepth + 1);
+            if (indexOfBreastDepthClothed >= 0)
+            {
+                breastDepthClothedEdit.Text = getFloatValue(blob, indexOfBreastDepthClothed, breastDepthTag.Length).ToString();
             }
             else
             {
@@ -271,6 +297,63 @@ namespace botn_savegame_manipulator
                 {
                     var newValue = float.Parse(breastClothedSizeEdit.Text);
                     var newBlob = setFloatValue(blob, indexOfBreastClothedSize, breastTransformTag.Length, newValue);
+                    writeSaveFile(newBlob);
+                }
+                catch (System.FormatException)
+                {
+                    setErrorLabel("Invalid input");
+                    return;
+                }
+            }
+            else
+            {
+                setErrorLabel("Failed to store data");
+            }
+        }
+
+        void onSetBreastDepth(object sender, RoutedEventArgs e)
+        {
+            var blob = loadSaveFile();
+
+            var indexOfBreastDepth = Utils.IndexOf(blob, breastDepthTag, 0);
+            if (indexOfBreastDepth >= 0)
+            {
+                try
+                {
+                    var newValue = float.Parse(breastDepthEdit.Text);
+                    var newBlob = setFloatValue(blob, indexOfBreastDepth, breastDepthTag.Length, newValue);
+                    writeSaveFile(newBlob);
+                }
+                catch (System.FormatException)
+                {
+                    setErrorLabel("Invalid input");
+                    return;
+                }
+            }
+            else
+            {
+                setErrorLabel("Failed to store data");
+            }
+        }
+
+        void onSetBreastDepthClothed(object sender, RoutedEventArgs e)
+        {
+            var blob = loadSaveFile();
+
+            var indexOfBreastDepthClothed = Utils.IndexOf(blob, breastDepthTag, 0);
+            if (indexOfBreastDepthClothed == -1)
+            {
+                setErrorLabel("Failed find index");
+                return;
+            }
+
+            var indexOfBreastClothedDepth = Utils.IndexOf(blob, breastDepthTag, indexOfBreastDepthClothed + 1);
+            if (indexOfBreastClothedDepth >= 0)
+            {
+                try
+                {
+                    var newValue = float.Parse(breastDepthClothedEdit.Text);
+                    var newBlob = setFloatValue(blob, indexOfBreastClothedDepth, breastDepthTag.Length, newValue);
                     writeSaveFile(newBlob);
                 }
                 catch (System.FormatException)

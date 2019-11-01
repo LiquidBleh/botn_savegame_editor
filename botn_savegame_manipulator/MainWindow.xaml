@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:botn_savegame_manipulator"
         mc:Ignorable="d"
         ResizeMode="NoResize"
-        Title="BOTN SaveGame Manipulator" Height="425.212" Width="800">
+        Title="BOTN SaveGame Manipulator" Height="425.212" Width="685">
     <StackPanel Margin="10">
         <Label Content="_Save Game Path: (relative from %appdata%)"/>
         <TextBox Name="saveGamePath">\..\Local\Radiant\Saved\SaveGames
@@ -14,49 +14,66 @@
         <Label Content="_Save Game File: (number in filename is the save game slot)"/>
         <TextBox Name="saveGameFile">0.sav
         </TextBox>
-        <Label Content="Change Sex:" Margin="3,10,3,0"/>
-        <Button Name="btn1" Background="LightGray" Margin="10,0,10,0"
-        BorderBrush="Black" BorderThickness="1" 
-        Click="onSetFemale" ClickMode="Press">
-            Set Female
-        </Button>
-        <Button Name="btn2" Background="LightGray" Margin="10,0,10,0"
-        BorderBrush="Black" BorderThickness="1" 
-        Click="onSetFuta" ClickMode="Press">
-            Set Futa
-        </Button>
-        <Button Name="btn3" Background="LightGray" Margin="10,0,10,0"
-        BorderBrush="Black" BorderThickness="1" 
-        Click="onSetMale" ClickMode="Press">
-            Set Male
-        </Button>
-        <Label Content="Change Transform:" Margin="3,10,3,0"/>
-        <Button Name="btn5" Background="LightGray" Margin="10,0,0,15"
-                BorderBrush="Black" BorderThickness="0" 
-                Click="onTransformRefresh" ClickMode="Press">
-            Refresh
-        </Button>
-        <Grid>
-            <Label Content="Breast Size:" Margin="10,0,10,0"/>
-            <TextBox Name="breastSizeEdit" Margin="146,0,400,0">
-            </TextBox>
-            <Button Name="btn4" Background="LightGray" Margin="379,0,312,0"
-                BorderBrush="Black" BorderThickness="0" 
-                Click="onSetBreastSize" ClickMode="Press">
-                Set
-            </Button>
-        </Grid>
-        <Label Margin="0,0,0,0"/>
-        <Grid>
-            <Label Content="Breast Size Clothed:" Margin="10,0,10,0"/>
-            <TextBox Name="breastClothedSizeEdit" Margin="146,0,400,0">
-            </TextBox>
-            <Button Name="btn6" Background="LightGray" Margin="379,0,312,0"
-                BorderBrush="Black" BorderThickness="0" 
-                Click="onSetBreastClothedSize" ClickMode="Press">
-                Set
-            </Button>
-        </Grid>
+        <TabControl Height="287">
+            <TabItem Header="Main Stats">
+                <StackPanel>
+                    <Label Content="Change Sex:" Margin="3,10,3,0"/>
+                    <Button Name="btn1" Background="LightGray" Margin="10,0,10,0"
+                    BorderBrush="Black" BorderThickness="1" 
+                    Click="onSetFemale" ClickMode="Press">
+                        Set Female
+                    </Button>
+                    <Button Name="btn2" Background="LightGray" Margin="10,0,10,0"
+                    BorderBrush="Black" BorderThickness="1" 
+                    Click="onSetFuta" ClickMode="Press">
+                        Set Futa
+                    </Button>
+                    <Button Name="btn3" Background="LightGray" Margin="10,0,10,0"
+                    BorderBrush="Black" BorderThickness="1" 
+                    Click="onSetMale" ClickMode="Press">
+                        Set Male
+                    </Button>
+                </StackPanel>
+            </TabItem>
+            <TabItem Header="Main Transform">
+                <StackPanel>
+                    <Label Content="Change Transform:" Margin="3,10,3,0"/>
+                    <Button Name="btn5" Background="LightGray" Margin="20,0,20,0"
+                            BorderBrush="Black" BorderThickness="0" 
+                            Click="onTransformRefresh" ClickMode="Press" Content="Refresh"/>
+                    <DockPanel HorizontalAlignment="Left" Margin="0, 10, 0, 10">
+                        <StackPanel Width="150" Margin="5, 10, 5, 10">
+                            <Label Content="Breast Size:"/>
+                            <TextBox Name="breastSizeEdit" Width="150"/>
+                            <Button x:Name="btn4" Background="LightGray"
+                            BorderBrush="Black" BorderThickness="0" 
+                            Click="onSetBreastSize" ClickMode="Press" Content="Set" Width="55"/>
+                        </StackPanel>
+                        <StackPanel Width="150" Margin="5, 10, 5, 10">
+                            <Label Content="Breast Size Clothed:"/>
+                            <TextBox Name="breastClothedSizeEdit" Width="150"/>
+                            <Button Name="btn6" Background="LightGray"
+                            BorderBrush="Black" BorderThickness="0" 
+                            Click="onSetBreastClothedSize" ClickMode="Press" Content="Set" Width="55"/>
+                        </StackPanel>
+                        <StackPanel Width="150" Margin="5, 10, 5, 10">
+                            <Label Content="Breast Depth:"/>
+                            <TextBox Name="breastDepthEdit"/>
+                            <Button Name="btn7" Background="LightGray"
+                            BorderBrush="Black" BorderThickness="0" 
+                            Click="onSetBreastDepth" ClickMode="Press" Content="Set" Width="55"/>
+                        </StackPanel>
+                        <StackPanel Width="150" Margin="5, 10, 5, 10">
+                            <Label Content="Breast Depth Clothed:"/>
+                            <TextBox Name="breastDepthClothedEdit"/>
+                            <Button Name="btn8" Background="LightGray"
+                            BorderBrush="Black" BorderThickness="0" 
+                            Click="onSetBreastDepthClothed" ClickMode="Press" Content="Set" Width="55"/>
+                        </StackPanel>
+                    </DockPanel>
+                </StackPanel>
+            </TabItem>
+        </TabControl>
         <Label Name="errorLabel" Content="" Margin="0,30,0,0"/>
     </StackPanel>
 </Window>
