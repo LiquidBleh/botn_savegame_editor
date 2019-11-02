@@ -35,6 +35,8 @@ namespace botn_savegame_manipulator
         byte[] sexPatchFuta = { 0x52, 0x61, 0x63, 0x65, 0x2E, 0x48, 0x75, 0x6D, 0x61, 0x6E, 0x2E, 0x42, 0x72, 0x65, 0x65, 0x64, 0x65
                 , 0x72, 0x00, 0x09, 0x00, 0x00, 0x00, 0x53, 0x65, 0x78, 0x2E, 0x46, 0x75, 0x74, 0x61, 0x00, 0x0B, 0x00, 0x00, 0x00 };
 
+        byte[] spiritFormTag = { 0x50, 0x6C, 0x61, 0x79, 0x65, 0x72, 0x53, 0x70, 0x69, 0x72, 0x69, 0x74, 0x46, 0x6F, 0x72, 0x6D };
+
         const String errorText = "Failed to update save game file";
         const String errorOkText = "Successfully updated save game file";
 
@@ -180,6 +182,10 @@ namespace botn_savegame_manipulator
             , 0x00, 0x00, 0x46, 0x6C, 0x6F, 0x61, 0x74, 0x50, 0x72, 0x6F, 0x70, 0x65, 0x72, 0x74, 0x79, 0x00, 0x04, 0x00, 0x00
             , 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
+        byte[] breastVerticalTag  = { 0x00, 0x42, 0x72, 0x65, 0x61, 0x73, 0x74, 0x56, 0x65, 0x72, 0x74, 0x69, 0x63, 0x61, 0x6C
+            , 0x00, 0x0E, 0x00, 0x00, 0x00, 0x46, 0x6C, 0x6F, 0x61, 0x74, 0x50, 0x72, 0x6F, 0x70, 0x65, 0x72, 0x74, 0x79, 0x00
+            , 0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+
         private float getFloatValue(byte[] blob, int index, int length)
         {
             var floatAsBytes = new byte[4];
@@ -204,168 +210,113 @@ namespace botn_savegame_manipulator
             return newBlob;
         }
 
+        private void setterRefresh(byte[] blob, byte[] tag, int offset, TextBox edit)
+        {
+            if (offset < 0)
+            {
+                return;
+            }
+            var indexOfBreastSize = Utils.IndexOf(blob, tag, offset);
+            if (indexOfBreastSize >= 0)
+            {
+                edit.Text = getFloatValue(blob, indexOfBreastSize, tag.Length).ToString();
+            }
+        }
+
         void onTransformRefresh(object sender, RoutedEventArgs e)
         {
             var blob = loadSaveFile();
 
-            var indexOfBreastSize = Utils.IndexOf(blob, breastTransformTag, 0);
-            if (indexOfBreastSize >= 0)
-            {
-                breastSizeEdit.Text = getFloatValue(blob, indexOfBreastSize, breastTransformTag.Length).ToString();
-            }
-            else
-            {
-                setErrorLabel("Failed to load data");
-                return;
-            }
+            setterRefresh(blob, breastTransformTag, 0, breastSizeEdit);
+            setterRefresh(blob, breastTransformTag, Utils.IndexOf(blob, breastTransformTag, 0) + 1, breastClothedSizeEdit);
 
-            var indexOfBreastClothedSize = Utils.IndexOf(blob, breastTransformTag, indexOfBreastSize + 1);
-            if (indexOfBreastClothedSize >= 0)
-            {
-                breastClothedSizeEdit.Text = getFloatValue(blob, indexOfBreastClothedSize, breastTransformTag.Length).ToString();
-            }
-            else
-            {
-                setErrorLabel("Failed to load data");
-                return;
-            }
+            setterRefresh(blob, breastDepthTag, 0, breastDepthEdit);
+            setterRefresh(blob, breastDepthTag, Utils.IndexOf(blob, breastDepthTag, 0) + 1, breastDepthClothedEdit);
 
-            var indexOfBreastDepth = Utils.IndexOf(blob, breastDepthTag, 0);
-            if (indexOfBreastDepth >= 0)
-            {
-                breastDepthEdit.Text = getFloatValue(blob, indexOfBreastDepth, breastDepthTag.Length).ToString();
-            }
-            else
-            {
-                setErrorLabel("Failed to load data");
-                return;
-            }
+            setterRefresh(blob, breastVerticalTag, 0, breastVertEdit);
+            setterRefresh(blob, breastVerticalTag, Utils.IndexOf(blob, breastVerticalTag, 0) + 1, breastClothedVertEdit);
 
-            var indexOfBreastDepthClothed = Utils.IndexOf(blob, breastDepthTag, indexOfBreastDepth + 1);
-            if (indexOfBreastDepthClothed >= 0)
-            {
-                breastDepthClothedEdit.Text = getFloatValue(blob, indexOfBreastDepthClothed, breastDepthTag.Length).ToString();
-            }
-            else
-            {
-                setErrorLabel("Failed to load data");
-                return;
-            }
+            setterRefresh(blob, breastTransformTag, Utils.IndexOf(blob, spiritFormTag, 0), spiritBreastSizeEdit);
+            setterRefresh(blob, breastDepthTag, Utils.IndexOf(blob, spiritFormTag, 0), spiritBreastDepthEdit);
+            setterRefresh(blob, breastVerticalTag, Utils.IndexOf(blob, spiritFormTag, 0), spiritBreastVerticalEdit);
+
             setErrorLabel("Done.");
+        }
+
+        static Func<byte[], int> defaultOffsetCalc = (blob) => { return 0; };
+
+        void setterUpdate(byte[] tag, Func<byte[], int> offsetCalc, String rawInput)
+        {
+            var blob = loadSaveFile();
+            var offset = offsetCalc(blob);
+            if (offset == -1)
+            {
+                return;
+            }
+
+            var index = Utils.IndexOf(blob, tag, offset);
+            if (index >= 0)
+            {
+                try
+                {
+                    var newValue = float.Parse(rawInput);
+                    var newBlob = setFloatValue(blob, index, tag.Length, newValue);
+                    writeSaveFile(newBlob);
+                }
+                catch (System.FormatException)
+                {
+                    setErrorLabel("Invalid input");
+                }
+            }
+            else
+            {
+                setErrorLabel("Failed to store data");
+            }
         }
 
         void onSetBreastSize(object sender, RoutedEventArgs e)
         {
-            var blob = loadSaveFile();
-
-            var indexOfBreastSize = Utils.IndexOf(blob, breastTransformTag, 0);
-            if (indexOfBreastSize >= 0)
-            {
-                try
-                {
-                    var newValue = float.Parse(breastSizeEdit.Text);
-                    var newBlob = setFloatValue(blob, indexOfBreastSize, breastTransformTag.Length, newValue);
-                    writeSaveFile(newBlob);
-                }
-                catch(System.FormatException)
-                {
-                    setErrorLabel("Invalid input");
-                    return;
-                }
-            }
-            else
-            {
-                setErrorLabel("Failed to store data");
-            }
+            setterUpdate(breastTransformTag, defaultOffsetCalc, breastSizeEdit.Text);
         }
 
         void onSetBreastClothedSize(object sender, RoutedEventArgs e)
         {
-            var blob = loadSaveFile();
-
-            var indexOfBreastSize = Utils.IndexOf(blob, breastTransformTag, 0);
-            if (indexOfBreastSize == -1)
-            {
-                setErrorLabel("Failed find index");
-                return;
-            }
-
-            var indexOfBreastClothedSize = Utils.IndexOf(blob, breastTransformTag, indexOfBreastSize + 1);
-            if (indexOfBreastClothedSize >= 0)
-            {
-                try
-                {
-                    var newValue = float.Parse(breastClothedSizeEdit.Text);
-                    var newBlob = setFloatValue(blob, indexOfBreastClothedSize, breastTransformTag.Length, newValue);
-                    writeSaveFile(newBlob);
-                }
-                catch (System.FormatException)
-                {
-                    setErrorLabel("Invalid input");
-                    return;
-                }
-            }
-            else
-            {
-                setErrorLabel("Failed to store data");
-            }
+            setterUpdate(breastTransformTag, (b) => { return Utils.IndexOf(b, breastTransformTag, 0) + breastTransformTag.Length; }, breastClothedSizeEdit.Text);
         }
 
         void onSetBreastDepth(object sender, RoutedEventArgs e)
         {
-            var blob = loadSaveFile();
-
-            var indexOfBreastDepth = Utils.IndexOf(blob, breastDepthTag, 0);
-            if (indexOfBreastDepth >= 0)
-            {
-                try
-                {
-                    var newValue = float.Parse(breastDepthEdit.Text);
-                    var newBlob = setFloatValue(blob, indexOfBreastDepth, breastDepthTag.Length, newValue);
-                    writeSaveFile(newBlob);
-                }
-                catch (System.FormatException)
-                {
-                    setErrorLabel("Invalid input");
-                    return;
-                }
-            }
-            else
-            {
-                setErrorLabel("Failed to store data");
-            }
+            setterUpdate(breastDepthTag, defaultOffsetCalc, breastDepthEdit.Text);
         }
 
         void onSetBreastDepthClothed(object sender, RoutedEventArgs e)
         {
-            var blob = loadSaveFile();
+            setterUpdate(breastDepthTag, (b) => { return Utils.IndexOf(b, breastDepthTag, 0) + breastDepthTag.Length; }, breastDepthClothedEdit.Text);
+        }
 
-            var indexOfBreastDepthClothed = Utils.IndexOf(blob, breastDepthTag, 0);
-            if (indexOfBreastDepthClothed == -1)
-            {
-                setErrorLabel("Failed find index");
-                return;
-            }
+        private void onSetBreastVert(object sender, RoutedEventArgs e)
+        {
+            setterUpdate(breastVerticalTag, defaultOffsetCalc, breastVertEdit.Text);
+        }
 
-            var indexOfBreastClothedDepth = Utils.IndexOf(blob, breastDepthTag, indexOfBreastDepthClothed + 1);
-            if (indexOfBreastClothedDepth >= 0)
-            {
-                try
-                {
-                    var newValue = float.Parse(breastDepthClothedEdit.Text);
-                    var newBlob = setFloatValue(blob, indexOfBreastClothedDepth, breastDepthTag.Length, newValue);
-                    writeSaveFile(newBlob);
-                }
-                catch (System.FormatException)
-                {
-                    setErrorLabel("Invalid input");
-                    return;
-                }
-            }
-            else
-            {
-                setErrorLabel("Failed to store data");
-            }
+        private void onSetBreastVertClothed(object sender, RoutedEventArgs e)
+        {
+            setterUpdate(breastVerticalTag, (b) => { return Utils.IndexOf(b, breastVerticalTag, 0) + breastVerticalTag.Length; }, breastVertEdit.Text);
+        }
+
+        private void onSetSpiritBreastSize(object sender, RoutedEventArgs e)
+        {
+            setterUpdate(breastTransformTag, (b) => { return Utils.IndexOf(b, spiritFormTag, 0) + spiritFormTag.Length; }, spiritBreastSizeEdit.Text);
+        }
+
+        private void onSetSpiritBreastDepth(object sender, RoutedEventArgs e)
+        {
+            setterUpdate(breastDepthTag, (b) => { return Utils.IndexOf(b, spiritFormTag, 0) + spiritFormTag.Length; }, spiritBreastDepthEdit.Text);
+        }
+
+        private void onSetSpiritBreastVertical(object sender, RoutedEventArgs e)
+        {
+            setterUpdate(breastVerticalTag, (b) => { return Utils.IndexOf(b, spiritFormTag, 0) + spiritFormTag.Length; }, spiritBreastVerticalEdit.Text);
         }
     }
 }
