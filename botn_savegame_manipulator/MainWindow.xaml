@@ -16,7 +16,7 @@
         </TextBox>
         <Separator Margin="0,15,0,0"/>
         <TabControl Height="397">
-            <TabItem Header="Main Stats">
+            <TabItem Header="Stats">
                 <StackPanel>
                     <Label Content="Change Sex:" Margin="3,10,3,0"/>
                     <Button Name="btn1" Background="LightGray" Margin="10,0,10,0"
@@ -36,7 +36,7 @@
                     </Button>
                 </StackPanel>
             </TabItem>
-            <TabItem Header="Main Transform">
+            <TabItem Header="Transform">
                 <StackPanel>
                     <Label Content="Change Transform:" Margin="3,10,3,0"/>
                     <Button Name="btn5" Background="LightGray" Margin="20,0,20,0"
