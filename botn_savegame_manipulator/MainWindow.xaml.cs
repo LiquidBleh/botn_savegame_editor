@@ -318,5 +318,54 @@ namespace botn_savegame_manipulator
         {
             setterUpdate(breastVerticalTag, (b) => { return Utils.IndexOf(b, spiritFormTag, 0) + spiritFormTag.Length; }, spiritBreastVerticalEdit.Text);
         }
+
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        ///
+        /// Pets
+        ///
+        ////////////////////////////////////////////////////////////////////////////////////////////
+
+        byte[] petNameTagFuta   = { 0x4E, 0x61, 0x6D, 0x65, 0x00, 0x0C, 0x00, 0x00, 0x00, 0x53, 0x74, 0x72, 0x50, 0x72, 0x6F, 0x70, 0x65, 0x72, 0x74, 0x79, 0x00, 0x09, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x05, 0x00, 0x00, 0x00 };
+        byte[] petNameTagFemale = { 0x4E, 0x61, 0x6D, 0x65, 0x00, 0x0C, 0x00, 0x00, 0x00, 0x53, 0x74, 0x72, 0x50, 0x72, 0x6F, 0x70, 0x65, 0x72, 0x74, 0x79, 0x00, 0x0A, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x06, 0x00, 0x00, 0x00 };
+        byte[][] petNameTags;
+
+        private String readTillNull(byte[] blob, int offset)
+        {
+            int i = offset;
+            while(blob[i] > 0x00)
+            {
+                ++i;
+            }
+            return new System.Text.ASCIIEncoding().GetString(blob.Skip(offset).Take(i - offset).ToArray());
+        }
+
+        private void onPetRefresh(object sender, RoutedEventArgs e)
+        {
+            petNameTags = new byte[][] { petNameTagFuta, petNameTagFemale }; // TODO move to constructor
+
+            var blob = loadSaveFile();
+            int offset = 0;
+
+            foreach (var petNameTag in petNameTags)
+            {
+                while (true)
+                {
+                    offset = Utils.IndexOf(blob, petNameTag, offset);
+                    if (offset == -1)
+                    {
+                        offset = 0;
+                        break;
+                    }
+
+                    offset += petNameTag.Length;
+                    var pet = readTillNull(blob, offset);
+
+                    var item = new ComboBoxItem();
+                    item.Content = pet;
+
+                    petComboBox.Items.Add(item);
+                }
+            }
+        }
     }
 }

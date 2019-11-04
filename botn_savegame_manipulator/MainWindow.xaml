@@ -39,7 +39,7 @@
             <TabItem Header="Transform">
                 <StackPanel>
                     <Label Content="Change Transform:" Margin="3,10,3,0"/>
-                    <Button Name="btn5" Background="LightGray" Margin="20,0,20,0"
+                    <Button Name="btn5" Background="LightGray" Margin="20,0"
                             BorderBrush="Black" BorderThickness="0" 
                             Click="onTransformRefresh" ClickMode="Press" Content="Refresh"/>
                     <DockPanel HorizontalAlignment="Left" Margin="0, 10, 0, 10">
@@ -111,6 +111,18 @@
                             Click="onSetSpiritBreastVertical" ClickMode="Press" Content="Set" Width="55"/>
                         </StackPanel>
                     </DockPanel>
+                </StackPanel>
+            </TabItem>
+            <TabItem Header="Pets">
+                <StackPanel>
+                    <Button Name="btn14" Background="LightGray" Margin="20,0"
+                                BorderBrush="Black" BorderThickness="0" 
+                                Click="onPetRefresh" ClickMode="Press" Content="Refresh"/>
+                    <Separator/>
+                    <ComboBox Name="petComboBox"
+                    Text="Choose..."
+                    IsEditable="true"
+                    IsReadOnly="true"/>
                 </StackPanel>
             </TabItem>
         </TabControl>
