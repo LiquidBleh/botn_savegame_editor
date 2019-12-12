@@ -5,18 +5,19 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
+using System.Diagnostics;
 
 namespace botn_savegame_manipulator
 {
     public partial class MainWindow : Window
     {
+        private void openInBrower(object sender, RequestNavigateEventArgs e)
+        {
+            Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
+            e.Handled = true;
+        }
+
         ////////////////////////////////////////////////////////////////////////////////////////////
         ///
         /// Player Stats
@@ -40,7 +41,9 @@ namespace botn_savegame_manipulator
         {
             InitializeComponent();
 
+#if PETS
             initPets();
+#endif
         }
 
         void onSetFemale(object sender, RoutedEventArgs e)
@@ -308,6 +311,8 @@ namespace botn_savegame_manipulator
         ///
         ////////////////////////////////////////////////////////////////////////////////////////////
 
+#if PETS
+
         byte[] petNameTag     = { 0x4E, 0x61, 0x6D, 0x65, 0x00, 0x0C, 0x00, 0x00, 0x00, 0x53, 0x74, 0x72, 0x50, 0x72, 0x6F, 0x70, 0x65, 0x72, 0x74, 0x79, 0x00, 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00 };
         byte[] petNameTagMask = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00 };
         byte[] breederTag     = { 0x52, 0x61, 0x63, 0x65, 0x2E, 0x48, 0x75, 0x6D, 0x61, 0x6E, 0x2E, 0x42, 0x72, 0x65, 0x65, 0x64, 0x65, 0x72 };
@@ -397,5 +402,6 @@ namespace botn_savegame_manipulator
                 petComboBox.Items.Add(item);
             }
         }
+#endif
     }
 }

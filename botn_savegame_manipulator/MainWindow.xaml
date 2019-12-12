@@ -6,8 +6,13 @@
         xmlns:local="clr-namespace:botn_savegame_manipulator"
         mc:Ignorable="d"
         ResizeMode="NoResize"
-        Title="BOTN SaveGame Manipulator" Height="605.212" Width="685">
+        Title="BOTN SaveGame Manipulator" Height="625" Width="685">
     <StackPanel Margin="10">
+        <TextBlock HorizontalAlignment="Right">           
+            <Hyperlink NavigateUri="https://github.com/LiquidBleh/botn_cheats/tree/master/ct" RequestNavigate="openInBrower">
+                Click here for Cheat Tables
+            </Hyperlink>
+        </TextBlock>
         <Label Content="_Save Game Path: (relative from %appdata%)"/>
         <TextBox Name="saveGamePath">\..\Local\Radiant\Saved\SaveGames
         </TextBox>
@@ -113,6 +118,7 @@
                     </DockPanel>
                 </StackPanel>
             </TabItem>
+<!--
             <TabItem Header="Pets">
                 <StackPanel>
                     <Button Name="btn14" Background="LightGray" Margin="20,0"
@@ -125,6 +131,7 @@
                     IsReadOnly="true"/>
                 </StackPanel>
             </TabItem>
+-->
         </TabControl>
         <Label Name="errorLabel" Content="" Margin="0,20,0,0"/>
     </StackPanel>
