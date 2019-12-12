@@ -8,12 +8,16 @@ namespace botn_savegame_manipulator
 {
     class Utils
     {
-        public static int IndexOf(byte[] blob, byte[] tag, int offset)
+        public static int IndexOf(byte[] blob, byte[] tag, int offset, byte[] mask = null, int maxOffset = -1)
         {
-            int hit = 0;
-            for (int i = offset; i < blob.Length; i++)
+            if (maxOffset < 0 || blob.Length < maxOffset)
             {
-                if (blob[i] == tag[hit])
+                maxOffset = blob.Length;
+            }
+            int hit = 0;
+            for (int i = offset; i < maxOffset; i++)
+            {
+                if (blob[i] == tag[hit] || (mask != null && mask[hit] == 0xFF))
                 {
                     hit++;
                 }

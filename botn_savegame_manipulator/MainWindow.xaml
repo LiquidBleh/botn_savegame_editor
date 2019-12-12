@@ -6,8 +6,13 @@
         xmlns:local="clr-namespace:botn_savegame_manipulator"
         mc:Ignorable="d"
         ResizeMode="NoResize"
-        Title="BOTN SaveGame Manipulator" Height="605.212" Width="685">
+        Title="BOTN SaveGame Manipulator" Height="625" Width="685">
     <StackPanel Margin="10">
+        <TextBlock HorizontalAlignment="Right">           
+            <Hyperlink NavigateUri="https://github.com/LiquidBleh/botn_cheats/tree/master/ct" RequestNavigate="openInBrower">
+                Click here for Cheat Tables
+            </Hyperlink>
+        </TextBlock>
         <Label Content="_Save Game Path: (relative from %appdata%)"/>
         <TextBox Name="saveGamePath">\..\Local\Radiant\Saved\SaveGames
         </TextBox>
@@ -39,7 +44,7 @@
             <TabItem Header="Transform">
                 <StackPanel>
                     <Label Content="Change Transform:" Margin="3,10,3,0"/>
-                    <Button Name="btn5" Background="LightGray" Margin="20,0,20,0"
+                    <Button Name="btn5" Background="LightGray" Margin="20,0"
                             BorderBrush="Black" BorderThickness="0" 
                             Click="onTransformRefresh" ClickMode="Press" Content="Refresh"/>
                     <DockPanel HorizontalAlignment="Left" Margin="0, 10, 0, 10">
@@ -113,6 +118,20 @@
                     </DockPanel>
                 </StackPanel>
             </TabItem>
+<!--
+            <TabItem Header="Pets">
+                <StackPanel>
+                    <Button Name="btn14" Background="LightGray" Margin="20,0"
+                                BorderBrush="Black" BorderThickness="0" 
+                                Click="onPetRefresh" ClickMode="Press" Content="Refresh"/>
+                    <Separator/>
+                    <ComboBox Name="petComboBox"
+                    Text="Choose..."
+                    IsEditable="true"
+                    IsReadOnly="true"/>
+                </StackPanel>
+            </TabItem>
+-->
         </TabControl>
         <Label Name="errorLabel" Content="" Margin="0,20,0,0"/>
     </StackPanel>
