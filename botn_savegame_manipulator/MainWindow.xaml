@@ -14,7 +14,7 @@
             </Hyperlink>
         </TextBlock>
         <Label Content="_Save Game Path: (relative from %appdata%)"/>
-        <TextBox Name="saveGamePath">\..\Local\Radiant\Saved\SaveGames
+        <TextBox Name="saveGamePath">\..\Local\OBF\Saved\SaveGames
         </TextBox>
         <Label Content="_Save Game File: (number in filename is the save game slot)"/>
         <TextBox Name="saveGameFile">0.sav
