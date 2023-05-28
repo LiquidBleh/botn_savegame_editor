@@ -88,9 +88,17 @@ namespace botn_savegame_manipulator
         private byte[] loadSaveFile()
         {
             var fileName = getFileName();
-            var blob = System.IO.File.ReadAllBytes(fileName);
-            writeBackupSaveFile(blob);
-            return blob;
+            try
+            {
+                var blob = System.IO.File.ReadAllBytes(fileName);
+                writeBackupSaveFile(blob);
+                return blob;
+            }
+            catch (Exception)
+            {
+                var blob = new byte[0];
+                return blob;
+            }
         }
 
         private void writeBackupSaveFile(byte[] blob)
