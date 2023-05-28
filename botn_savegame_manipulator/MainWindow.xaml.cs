@@ -234,7 +234,14 @@ namespace botn_savegame_manipulator
             setterRefresh(blob, breastDepthTag, Utils.IndexOf(blob, spiritFormTag, 0), spiritBreastDepthEdit);
             setterRefresh(blob, breastVerticalTag, Utils.IndexOf(blob, spiritFormTag, 0), spiritBreastVerticalEdit);
 
-            setErrorLabel("Done.");
+            if (blob.Length > 0)
+            {
+                setErrorLabel("Done.");
+            }
+            else
+            {
+                setErrorLabel("The save could not be read. Check the file path!");
+            }
         }
 
         static Func<byte[], int> defaultOffsetCalc = (blob) => { return 0; };
