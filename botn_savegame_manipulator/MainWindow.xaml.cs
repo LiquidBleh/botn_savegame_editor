@@ -88,9 +88,17 @@ namespace botn_savegame_manipulator
         private byte[] loadSaveFile()
         {
             var fileName = getFileName();
-            var blob = System.IO.File.ReadAllBytes(fileName);
-            writeBackupSaveFile(blob);
-            return blob;
+            try
+            {
+                var blob = System.IO.File.ReadAllBytes(fileName);
+                writeBackupSaveFile(blob);
+                return blob;
+            }
+            catch (Exception)
+            {
+                var blob = new byte[0];
+                return blob;
+            }
         }
 
         private void writeBackupSaveFile(byte[] blob)
@@ -226,7 +234,14 @@ namespace botn_savegame_manipulator
             setterRefresh(blob, breastDepthTag, Utils.IndexOf(blob, spiritFormTag, 0), spiritBreastDepthEdit);
             setterRefresh(blob, breastVerticalTag, Utils.IndexOf(blob, spiritFormTag, 0), spiritBreastVerticalEdit);
 
-            setErrorLabel("Done.");
+            if (blob.Length > 0)
+            {
+                setErrorLabel("Done.");
+            }
+            else
+            {
+                setErrorLabel("The save could not be read. Check the file path!");
+            }
         }
 
         static Func<byte[], int> defaultOffsetCalc = (blob) => { return 0; };
