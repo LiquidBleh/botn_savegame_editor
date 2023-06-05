@@ -9,7 +9,7 @@
         Title="BOTN SaveGame Manipulator" Height="625" Width="685">
     <StackPanel Margin="10">
         <TextBlock HorizontalAlignment="Right">           
-            <Hyperlink NavigateUri="https://github.com/LiquidBleh/botn_cheats/tree/master/ct" RequestNavigate="openInBrower">
+            <Hyperlink NavigateUri="https://github.com/RedoHeal/BotN_Cheats/releases" RequestNavigate="openInBrower">
                 Click here for Cheat Tables
             </Hyperlink>
         </TextBlock>
